@@ -18,7 +18,7 @@ public class ItemIdGenerator implements IdentifierGenerator {
 	public ItemIdGenerator() {
 
 		value = DBConfigAndUtil.getTableCount("item");
-
+	
 	}
 
 	@Override

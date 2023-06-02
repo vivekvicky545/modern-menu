@@ -14,8 +14,7 @@ public class DBConfigAndUtil {
 		
 		Connection connection=DriverManager.getConnection(  
 				"jdbc:mysql://localhost:3306/dynamicmenu","root","Chandu@0502");  
-//		Connection connection=DriverManager.getConnection(  
-//				"jdbc:mysql://172.23.0.2:3306/dynamicmenu","sa","Chandu@0502");  
+
 		
 		return connection;
 		
@@ -23,16 +22,16 @@ public class DBConfigAndUtil {
 	
 	public static int getTableCount(String name) {
 		
-		int value = 0;
+		String value = "0";
 		
 		try {
 
 			Connection connection = DBConfigAndUtil.getConnection();
 			Statement statement = connection.createStatement();
-			ResultSet resultSet = statement.executeQuery("SELECT COUNT(1) FROM dynamicmenu."+name+";");
+			ResultSet resultSet = statement.executeQuery("SELECT MAX("+name+"_id) FROM dynamicmenu."+name+";");
 
 			while (resultSet.next()) {
-				value = resultSet.getInt(1);
+				value = resultSet.getString(1).substring(1);
 			}
 			connection.close();
 			
@@ -40,7 +39,7 @@ public class DBConfigAndUtil {
 			System.out.println(e1.getStackTrace());
 		}
 		
-		return value;
+		return Integer.parseInt(value);
 		
 	}
 

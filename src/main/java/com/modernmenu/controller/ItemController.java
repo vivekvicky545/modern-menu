@@ -2,6 +2,7 @@ package com.modernmenu.controller;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.modernmenu.dto.ItemRequestDTO;
 import com.modernmenu.service.impl.ItemServiceImpl;
 
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 
 @RestController
@@ -26,7 +28,7 @@ public class ItemController {
 	private final ItemServiceImpl itemService;
 
 	@PostMapping("/add")
-	public ResponseEntity<HttpStatus> addItem(@RequestBody ItemRequestDTO itemDTO) {
+	public ResponseEntity<HttpStatus> addItem(@RequestBody @Valid ItemRequestDTO itemDTO) {
 
 		itemService.addItem(itemDTO);
 		return ResponseEntity.ok(HttpStatus.OK);
