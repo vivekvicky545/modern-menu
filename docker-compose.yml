@@ -1,18 +1,27 @@
 version: "3.7"
 services:
+  mysqldb:
+    image: "mysql:8.0"
+    ports:
+      - 3306:3306
+    networks:
+      - springapimysql-net  
+    environment:
+      MYSQL_DATABASE: dynamicmenu
+      MYSQL_USER: Chandu
+      MYSQL_PASSWORD: Chandu@0502
+      MYSQL_ROOT_PASSWORD: Chandu@0502l
+
   api_service:
     build: .
     ports:
       - 8080:8080
+    networks:
+      - springapimysql-net
     depends_on:
-      - mysql_db
-    links:
-      - mysql_db:app_db
-  mysql_db:
-    image: "mysql:8.0"
-    restart: always
-    ports:
-      - 3306:3306
-    environment:
-      MYSQL_PASSWORD: root
-      MYSQL_ROOT_PASSWORD: root
+      - mysqldb
+    volumes:
+      - .m2:/root/.m2      
+
+networks:
+  springapimysql-net:

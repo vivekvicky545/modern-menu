@@ -2,6 +2,7 @@ package com.modernmenu.controller;
 
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -23,8 +24,18 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 public class RestaurnatController {
 
+	@Value("${spring.datasource.url}")
+	public static String url;
+	
 	
 	private final RestaurantService restaurantService;
+	
+	
+	@GetMapping(value = "/hello")
+	public String sayHell() {
+		System.out.println(RestaurnatController.url);
+		return RestaurnatController.url;
+	}
 	
 	@PostMapping("/add")
 	public ResponseEntity<HttpStatus> addRestaurnat(@RequestBody Restaurant restaurant) {

@@ -4,7 +4,7 @@ import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
-import com.modernmenu.dto.ItemRequestDTO;
+import com.modernmenu.dto.ItemRequestRecord;
 import com.modernmenu.dto.ItemResponseDTO;
 import com.modernmenu.entity.Category;
 import com.modernmenu.entity.Item;
@@ -13,6 +13,7 @@ import com.modernmenu.repository.CategoryRepository;
 import com.modernmenu.repository.ItemRepository;
 import com.modernmenu.service.ItemService;
 
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -25,26 +26,26 @@ public class ItemServiceImpl implements ItemService {
 	private final ItemRepository itemRepository;
 	private final CategoryRepository categoryRepository;
 
-	public void addItem(ItemRequestDTO itemDTO) {
+	public void addItem(@Valid ItemRequestRecord itemRecord) {
 
-		log.debug("addItem Request {}", itemDTO);
+		log.debug("addItem Request {}", itemRecord);
 
-		Optional<ItemResponseDTO> isItemExitsInDB = itemRepository.getItem(itemDTO.getItemName(),
-				itemDTO.getRestaurantId());
+		Optional<ItemResponseDTO> isItemExitsInDB = itemRepository.getItem(itemRecord.itemName(),
+				itemRecord.restaurantId());
 
 		if (isItemExitsInDB.isPresent()) {
 			throw new ResourceAlreadyExists();
 		}
 		
-		String categoryId = checkForCategoryAndGetCategoryId(itemDTO.getRestaurantId(), itemDTO.getCategoryName());
+		String categoryId = checkForCategoryAndGetCategoryId(itemRecord.restaurantId(), itemRecord.categoryName());
 
 		Item newItem = new Item();
 
-		newItem.setItemName(itemDTO.getItemName());
+		newItem.setItemName(itemRecord.itemName());
 		newItem.setCategoryId(categoryId);
-		newItem.setPrice(itemDTO.getPrice());
+		newItem.setPrice(itemRecord.price());
 		newItem.setStatus(false);
-		newItem.setType(itemDTO.getType());
+		newItem.setType(itemRecord.type());
 		newItem.setStatus(true);
 
 		itemRepository.saveAndFlush(newItem);
@@ -52,17 +53,17 @@ public class ItemServiceImpl implements ItemService {
 	}
 	
 	@Override
-	public void updateItem(String itemId, ItemRequestDTO itemDTO) {
+	public void updateItem(String itemId, ItemRequestRecord itemRecord) {
 
-		log.debug("updateItem Request : {}", itemDTO);
+		log.debug("updateItem Request : {}", itemRecord);
 
 		Item item = itemRepository.findById(itemId).get();
 
-		item.setItemName(itemDTO.getItemName());
-		item.setPrice(itemDTO.getPrice());
-		item.setType(itemDTO.getType());
+		item.setItemName(itemRecord.itemName());
+		item.setPrice(itemRecord.price());
+		item.setType(itemRecord.type());
 
-		String categoryId = checkForCategoryAndGetCategoryId(itemDTO.getRestaurantId(), itemDTO.getCategoryName());
+		String categoryId = checkForCategoryAndGetCategoryId(itemRecord.restaurantId(), itemRecord.categoryName());
 		
 		item.setCategoryId(categoryId);
 
@@ -71,9 +72,9 @@ public class ItemServiceImpl implements ItemService {
 	}
 
 	@Override
-	public void removeItem(ItemRequestDTO itemDTO) {
+	public void removeItem(ItemRequestRecord itemRecord) {
 		
-		Optional<ItemResponseDTO> item = itemRepository.getItem(itemDTO.getItemName(), itemDTO.getRestaurantId());
+		Optional<ItemResponseDTO> item = itemRepository.getItem(itemRecord.itemName(), itemRecord.restaurantId());
 		itemRepository.deleteById(item.get().getItemId());
 
 	}
